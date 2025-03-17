@@ -1,33 +1,7 @@
-from flask import Flask, render_template, jsonify
-import requests, datetime, os
+from flask import Flask, render_template, jsonify, send_from_directory
+import os
 
 app = Flask(__name__)
-
-OURA_TOKEN = os.environ.get('OURA_TOKEN')
-
-def get_latest_bpm():
-    dt_now = datetime.datetime.now(datetime.timezone.utc)
-    dt_12h_ago = dt_now - datetime.timedelta(hours=12)
-
-    url = 'https://api.ouraring.com/v2/usercollection/heartrate'
-    params = {
-        'start_datetime': dt_12h_ago.isoformat(),
-        'end_datetime': dt_now.isoformat()
-    }
-    headers = {'Authorization': f'Bearer {OURA_TOKEN}'}
-
-    response = requests.get(url, headers=headers, params=params)
-    data = response.json()
-    hrs = data.get('data', [])
-
-    if hrs:
-        latest = hrs[-1]
-        return {
-            'bpm': latest['bpm'],
-            'timestamp': latest['timestamp']
-        }
-    else:
-        return {}
 
 @app.route('/')
 def index():
@@ -35,8 +9,18 @@ def index():
 
 @app.route('/api/bpm')
 def api_bpm():
-    # リクエストの度に最新データを返す
-    return jsonify(get_latest_bpm())
+    # cron.pyで作成されたdata.jsonを読み込んで返す
+    data_file = os.path.join(app.static_folder, 'data.json')
+    if os.path.exists(data_file):
+        with open(data_file, 'r', encoding='utf-8') as f:
+            return jsonify(f.read())
+    else:
+        return jsonify({})
+
+# JSONを静的ファイルとして提供（任意・安全のため）
+@app.route('/data.json')
+def data_json():
+    return send_from_directory(app.static_folder, 'data.json')
 
 if __name__ == '__main__':
     app.run(debug=True)
