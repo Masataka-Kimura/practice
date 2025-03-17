@@ -35,6 +35,7 @@ def index():
 
 @app.route('/api/bpm')
 def api_bpm():
+    # リクエストの度に最新データを返す
     return jsonify(get_latest_bpm())
 
 if __name__ == '__main__':

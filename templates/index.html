@@ -29,7 +29,7 @@
 
 <script>
 const update = () => {
-  fetch('/static/data.json').then(res => res.json()).then(data => {
+  fetch('/api/bpm').then(res => res.json()).then(data => {
     const bpm = data.bpm || 0;
     const timestamp = data.timestamp;
     const subject = document.getElementById('subject');
@@ -73,9 +73,11 @@ const update = () => {
   })
 }
 
-// 最初に実行し、その後5分ごとに更新
+// 初回実行、以降は1分ごとに自動更新
 update();
-setInterval(update, 5 * 60 * 1000);
+setInterval(update, 60000);
+
+
 </script>
 </body>
 </html>
