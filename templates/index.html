@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>心拍数モニター</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kaisei+Opti&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Kaisei Opti', sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    img {
+      width: 300px;
+      height: auto;
+      margin: 20px auto;
+    }
+    .timestamp {
+      color: grey;
+    }
+  </style>
+</head>
+<body>
+  <h2 id="subject">ロード中…</h2>
+  <img id="status-img" src="/static/0.png" alt="status image">
+  <h1 id="bpm">❤️ 0 bpm</h1>
+  <p id="datetime" class="timestamp"></p>
+  <h3 id="detail"></h3>
+
+<script>
+const update = () => {
+  fetch('/static/data.json').then(res => res.json()).then(data => {
+    const bpm = data.bpm || 0;
+    const timestamp = data.timestamp;
+    const subject = document.getElementById('subject');
+    const bpmElem = document.getElementById('bpm');
+    const datetime = document.getElementById('datetime');
+    const detail = document.getElementById('detail');
+    const img = document.getElementById('status-img');
+
+    if (bpm && timestamp) {
+      bpmElem.textContent = `❤️ ${bpm} bpm`;
+      const d = new Date(timestamp);
+      const now = new Date();
+      const diff = Math.floor((now - d) / 60000);
+      const ago = diff > 60 ? `${Math.floor(diff/60)}時間前` : `${diff}分前`;
+      datetime.textContent = `${d.getMonth()+1}月${d.getDate()}日 ${d.getHours()}時${d.getMinutes()}分 (${ago})`;
+
+      if (bpm >= 90) {
+        img.src = '/static/3.png';
+        subject.textContent = '心拍高いとき';
+        detail.textContent = '元気いっぱい';
+      } else if (bpm >= 70) {
+        img.src = '/static/2.png';
+        subject.textContent = '平常';
+        detail.textContent = 'ふつうです';
+      } else if (bpm >= 50) {
+        img.src = '/static/1.png';
+        subject.textContent = '心拍低め';
+        detail.textContent = 'おとなしい';
+      } else {
+        img.src = '/static/0.png';
+        subject.textContent = 'とても低い（もしかして…）';
+        detail.textContent = 'だいじょうぶかな？';
+      }
+    } else {
+      bpmElem.textContent = '❤️ --- bpm';
+      subject.textContent = 'データなし';
+      datetime.textContent = '';
+      detail.textContent = '12時間以上データがありません';
+      img.src = '/static/0.png';
+    }
+  })
+}
+
+// 最初に実行し、その後5分ごとに更新
+update();
+setInterval(update, 5 * 60 * 1000);
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "C:\Users\masat\OneDrive\ドキュメント\Oura API\cron.py", line 1, in <module>
+    import requests, json, datetime
+ModuleNotFoundError: No module named 'requests'
+Traceback (most recent call last):
+  File "C:\Users\masat\OneDrive\ドキュメント\Oura API\cron.py", line 1, in <module>
+    import requests, json, datetime
+ModuleNotFoundError: No module named 'requests'
+Traceback (most recent call last):
+  File "C:\Users\masat\OneDrive\ドキュメント\Oura API\cron.py", line 1, in <module>
+    import requests, json, datetime
+ModuleNotFoundError: No module named 'requests'
