@@ -1,6 +1,7 @@
+import os
 import requests, json, datetime
 
-OURA_TOKEN = "HNEMOKAN3CO3BZ3BLNAKLUK67QRAQYZM"
+OURA_TOKEN = os.environ.get('OURA_TOKEN')
 
 dt_now = datetime.datetime.now(datetime.timezone.utc)
 dt_12h_ago = dt_now - datetime.timedelta(hours=12)
